@@ -30,9 +30,10 @@ public class GatewayController {
     }
 
     @GetMapping("clear")
-    public void clear() {
+    public String clear() {
         refreshableRoutesLocator.clearRoutes();
         refreshableRoutesLocator.buildRoutes();
+        return "Cleared";
     }
 
     @PostMapping("publish")

@@ -39,13 +39,11 @@ public class MyGatewayFilter implements GatewayFilter, Ordered {
         // Здесь мы получаем параметры запроса, которые в адресе после ?
         String query = uri.getQuery();
 
-        System.out.println(path);
-        System.out.println(query);
+        System.out.println("Path: " + path);
+        System.out.println("Query: " + query);
 
         // Здесь мы должны как-то основание path узнать сервис на который переадресуем запрос
         URI forwardUri = repository.getUri();
-
-        System.out.println(query);
 
         // Формируем итоговый запрос
         URI result = null;
