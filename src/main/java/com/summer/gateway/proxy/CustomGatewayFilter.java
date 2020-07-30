@@ -1,6 +1,6 @@
 package com.summer.gateway.proxy;
 
-import com.summer.gateway.repositories.URITestRepository;
+import com.summer.gateway.dao.repositories.RemoteServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -15,18 +15,18 @@ import java.net.URISyntaxException;
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR;
 
 @Component
-public class MyGatewayFilter implements GatewayFilter, Ordered {
+public class CustomGatewayFilter implements GatewayFilter, Ordered {
 
     @Override
     public int getOrder() {
         return 10001;
     }
 
-    private URITestRepository repository;
+    private RemoteServiceRepository remoteServiceRepository;
 
     @Autowired
-    public void setRepository(URITestRepository repository) {
-        this.repository = repository;
+    public void setRemoteServiceRepository(RemoteServiceRepository remoteServiceRepository) {
+        this.remoteServiceRepository = remoteServiceRepository;
     }
 
     @Override
@@ -42,11 +42,12 @@ public class MyGatewayFilter implements GatewayFilter, Ordered {
         System.out.println("Path: " + path);
         System.out.println("Query: " + query);
 
-        // Здесь мы должны как-то основание path узнать сервис на который переадресуем запрос
-        URI forwardUri = repository.getUri();
+        // Здесь мы должны как-то на основание path должны узнать сервис на который переадресуем запрос
+        String forwardUri = remoteServiceRepository.findInstancesByPath(path).get(0).getUri().toString();
 
         // Формируем итоговый запрос
         URI result = null;
+
         try {
             if (query == null) {
                 result = new URI(forwardUri + path);
@@ -57,6 +58,7 @@ public class MyGatewayFilter implements GatewayFilter, Ordered {
             e.printStackTrace();
         }
 
+        System.out.println(result);
 
         // Здесь мы подставляем итовый запрос
         exchange.getAttributes().put(GATEWAY_REQUEST_URL_ATTR, result);

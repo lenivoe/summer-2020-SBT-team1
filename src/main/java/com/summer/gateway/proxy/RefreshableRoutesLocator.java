@@ -28,7 +28,7 @@ public class RefreshableRoutesLocator implements RouteLocator {
 
     private final RouteLocatorBuilder builder;
     private final GatewayRoutesRefresher gatewayRoutesRefresher;
-    private final MyGatewayFilter gatewayFilter;
+    private final CustomGatewayFilter gatewayFilter;
 
     private RouteLocatorBuilder.Builder routesBuilder;
     private Flux<Route> route;
@@ -36,7 +36,7 @@ public class RefreshableRoutesLocator implements RouteLocator {
     @Autowired
     public RefreshableRoutesLocator(@NonNull final RouteLocatorBuilder builder,
                                     @NonNull final GatewayRoutesRefresher gatewayRoutesRefresher,
-                                    @NonNull final MyGatewayFilter gatewayFilter) {
+                                    @NonNull final CustomGatewayFilter gatewayFilter) {
         this.builder = builder;
         this.gatewayRoutesRefresher = gatewayRoutesRefresher;
         this.gatewayFilter = gatewayFilter;

@@ -1,4 +1,4 @@
-package com.summer.gateway.models;
+package com.summer.gateway.remote.models;
 
 
 import java.util.Objects;
