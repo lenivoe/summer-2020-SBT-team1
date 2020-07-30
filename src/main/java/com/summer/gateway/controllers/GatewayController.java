@@ -4,6 +4,7 @@ package com.summer.gateway.controllers;
 import com.summer.gateway.models.PublishModelRequest;
 import com.summer.gateway.models.PublishModelResponse;
 import com.summer.gateway.proxy.RefreshableRoutesLocator;
+import com.summer.gateway.repositories.URITestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,10 +17,22 @@ import java.util.UUID;
 public class GatewayController {
 
     private RefreshableRoutesLocator refreshableRoutesLocator;
+    private URITestRepository repository;
+
+    @Autowired
+    public void setRepository(URITestRepository repository) {
+        this.repository = repository;
+    }
 
     @Autowired
     public void setRefreshableRoutesLocator(RefreshableRoutesLocator refreshableRoutesLocator) {
         this.refreshableRoutesLocator = refreshableRoutesLocator;
+    }
+
+    @GetMapping("clear")
+    public void clear() {
+        refreshableRoutesLocator.clearRoutes();
+        refreshableRoutesLocator.buildRoutes();
     }
 
     @PostMapping("publish")
@@ -27,6 +40,7 @@ public class GatewayController {
     PublishModelResponse publish(@RequestBody PublishModelRequest request) throws URISyntaxException {
 
         refreshableRoutesLocator.clearRoutes();
+
         URI uri;
 
         if (request.getPort() == null || request.getPort().equals("")) {
@@ -35,13 +49,9 @@ public class GatewayController {
             uri = new URI(request.getAddress() + ":" + request.getPort());
         }
 
-        request.getApi().forEach(it -> {
-            try {
-                refreshableRoutesLocator.addRoute(UUID.randomUUID().toString(), it.getPath(), uri);
-            } catch (URISyntaxException e) {
-                e.printStackTrace();
-            }
-        });
+        repository.setUri(uri);
+        request.getApi().forEach(it -> refreshableRoutesLocator.addRoute(it.getPath()));
+
         refreshableRoutesLocator.buildRoutes();
 
         return new PublishModelResponse(UUID.randomUUID().toString(), 10_000);

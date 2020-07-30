@@ -16,8 +16,6 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
 import javax.validation.constraints.NotNull;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 /**
  * A gateway route resolver which is used for dynamically refresh routes during the application runtime.
@@ -30,15 +28,18 @@ public class RefreshableRoutesLocator implements RouteLocator {
 
     private final RouteLocatorBuilder builder;
     private final GatewayRoutesRefresher gatewayRoutesRefresher;
+    private final MyGatewayFilter gatewayFilter;
 
     private RouteLocatorBuilder.Builder routesBuilder;
     private Flux<Route> route;
 
     @Autowired
     public RefreshableRoutesLocator(@NonNull final RouteLocatorBuilder builder,
-                                    @NonNull final GatewayRoutesRefresher gatewayRoutesRefresher) {
+                                    @NonNull final GatewayRoutesRefresher gatewayRoutesRefresher,
+                                    @NonNull final MyGatewayFilter gatewayFilter) {
         this.builder = builder;
         this.gatewayRoutesRefresher = gatewayRoutesRefresher;
+        this.gatewayFilter = gatewayFilter;
 
         clearRoutes();
 
@@ -60,16 +61,12 @@ public class RefreshableRoutesLocator implements RouteLocator {
      * Add a new route. After adding all routes call 'buildRoutes'.
      */
     @NotNull
-    public RefreshableRoutesLocator addRoute(@NotNull final String id, @NotNull final String path, @NotNull final URI uri) throws URISyntaxException {
-        if (isNullOrEmpty(uri.getScheme())) {
-            throw new URISyntaxException("Missing scheme in URI: {}", uri.toString());
-        }
-
-        routesBuilder.route(id, fn -> fn
+    public RefreshableRoutesLocator addRoute(@NotNull final String path) {
+        routesBuilder.route(fn -> fn
                 .path(path + "/**")
-                .uri(uri)
+                .filters(f -> f.filter(gatewayFilter))
+                .uri("lb://application")
         );
-
         return this;
     }
 
