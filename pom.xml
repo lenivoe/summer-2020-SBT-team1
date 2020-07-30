@@ -72,16 +72,6 @@
                     <repoToken>fuElMDsqpbvtqNxt3tzCiQRXIHiNcc12n8e4y</repoToken>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.2.1</version>
-                <configuration>
-                    <mainClass>main.java.com.summer.gateway.GatewayServiceApplication</mainClass>
-                </configuration>
-            </plugin>
-
         </plugins>
 
     </build>
