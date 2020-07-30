@@ -14,6 +14,12 @@
 	<name>gatewayservice</name>
 	<description>Demo project for Spring Boot</description>
 
+	<dependency>
+		<groupId>org.junit.jupiter</groupId>
+		<artifactId>junit-jupiter-engine</artifactId>
+		<version>5.5.2</version>
+	</dependency>
+
 	<properties>
 		<java.version>13</java.version>
 		<spring-cloud.version>Hoxton.SR6</spring-cloud.version>
