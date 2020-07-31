@@ -3,14 +3,12 @@ package com.summer.gateway.remote.controllers;
 
 import com.summer.gateway.discovery.ServiceReady;
 import com.summer.gateway.discovery.ServiceRegistrar;
-import com.summer.gateway.remote.models.PublishModelRequest;
-import com.summer.gateway.remote.models.PublishModelResponse;
-import com.summer.gateway.proxy.RefreshableRoutesLocator;
+import com.summer.gateway.remote.models.PublishRequestModel;
+import com.summer.gateway.remote.models.PublishResponseModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URISyntaxException;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("gateway")
@@ -31,7 +29,7 @@ public class GatewayController {
 
     @PostMapping("publish")
     public @ResponseBody
-    PublishModelResponse publish(@RequestBody PublishModelRequest request) throws URISyntaxException {
+    PublishResponseModel publish(@RequestBody PublishRequestModel request) throws URISyntaxException {
         return serviceRegistrar.register(request);
     }
 

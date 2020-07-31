@@ -1,18 +1,18 @@
 package com.summer.gateway.dao.repositories;
 
-import com.summer.gateway.discovery.model.Api;
-import com.summer.gateway.discovery.model.GroupRemoteService;
-import com.summer.gateway.discovery.model.RemoteService;
+import com.summer.gateway.discovery.model.ApiModel;
+import com.summer.gateway.discovery.model.GroupRemoteServiceModel;
+import com.summer.gateway.discovery.model.RemoteServiceModel;
 
 import java.util.List;
 
 
 public interface RemoteServiceRepository {
-    void addService(String nameService, String versionService, List<Api> api, RemoteService newInstance);
+    void addService(String nameService, List<ApiModel> api, RemoteServiceModel newInstance);
 
-    RemoteService findInstanceById(String id);
+    RemoteServiceModel findInstanceById(String id);
 
-    GroupRemoteService findGroupByNameAndVersion(String nameService, String versionService);
+    GroupRemoteServiceModel findGroupByName(String nameService);
 
-    List<GroupRemoteService> getActiveGroup();
+    List<GroupRemoteServiceModel> getActiveGroup();
 }

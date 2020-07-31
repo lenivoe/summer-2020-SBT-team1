@@ -1,7 +1,7 @@
 package com.summer.gateway.proxy;
 
 import com.summer.gateway.dao.repositories.RemoteServiceRepository;
-import com.summer.gateway.discovery.model.GroupRemoteService;
+import com.summer.gateway.discovery.model.GroupRemoteServiceModel;
 import com.summer.gateway.discovery.model.StateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -47,7 +47,7 @@ public class CustomGatewayFilter implements GatewayFilter, Ordered {
 
         String forwardUri = null;
 
-        List<GroupRemoteService> groupRemoteServices = remoteServiceRepository.getActiveGroup();
+        List<GroupRemoteServiceModel> groupRemoteServices = remoteServiceRepository.getActiveGroup();
         for (var group : groupRemoteServices) {
             if (group.hasApi(path)) {
                 forwardUri = group.getInstancesByState(StateService.ACTIVE).get(0).getUri().toString();

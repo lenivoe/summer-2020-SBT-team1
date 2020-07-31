@@ -5,19 +5,17 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class GroupRemoteService {
+public class GroupRemoteServiceModel {
 
     private final String nameService;
-    private final String versionService;
-    private final List<Api> api;
+    private final List<ApiModel> api;
 
     private boolean isGateway = false;
 
-    private final List<RemoteService> instances = new LinkedList<>();
+    private final List<RemoteServiceModel> instances = new LinkedList<>();
 
-    public GroupRemoteService(String nameService, String versionService, List<Api> api) {
+    public GroupRemoteServiceModel(String nameService, List<ApiModel> api) {
         this.nameService = nameService;
-        this.versionService = versionService;
         this.api = api;
     }
 
@@ -31,7 +29,7 @@ public class GroupRemoteService {
         return false;
     }
 
-    public void addInstance(RemoteService instance) {
+    public void addInstance(RemoteServiceModel instance) {
         this.instances.add(instance);
     }
 
@@ -50,22 +48,22 @@ public class GroupRemoteService {
         return false;
     }
 
-    public List<Api> getApi() {
+    public List<ApiModel> getApi() {
         return api;
     }
 
-    public List<RemoteService> getInstances() {
+    public List<RemoteServiceModel> getInstances() {
         return instances;
     }
 
-    public RemoteService getInstanceById(String id) {
+    public RemoteServiceModel getInstanceById(String id) {
         for (var instance : instances) {
             if (instance.getId().equals(id)) return instance;
         }
         return null;
     }
 
-    public List<RemoteService> getInstancesByState(StateService stateService) {
+    public List<RemoteServiceModel> getInstancesByState(StateService stateService) {
         return instances.stream().filter(m -> m.getState().equals(stateService)).collect(Collectors.toList());
     }
 
@@ -73,21 +71,19 @@ public class GroupRemoteService {
         return nameService;
     }
 
-    public String getVersionService() {
-        return versionService;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        GroupRemoteService that = (GroupRemoteService) o;
-        return Objects.equals(nameService, that.nameService) &&
-                Objects.equals(versionService, that.versionService);
+        GroupRemoteServiceModel that = (GroupRemoteServiceModel) o;
+        return isGateway == that.isGateway &&
+                Objects.equals(nameService, that.nameService) &&
+                Objects.equals(api, that.api) &&
+                Objects.equals(instances, that.instances);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(nameService, versionService);
+        return Objects.hash(nameService, api, isGateway, instances);
     }
 }

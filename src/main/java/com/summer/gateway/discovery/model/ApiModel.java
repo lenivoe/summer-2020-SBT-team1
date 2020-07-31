@@ -3,12 +3,12 @@ package com.summer.gateway.discovery.model;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-public class Api {
+public class ApiModel {
 
     private final String path;
     private final Pattern pattern;
 
-    public Api(String path) {
+    public ApiModel(String path) {
         this.path = path;
         this.pattern = makePatten();
     }
@@ -48,7 +48,7 @@ public class Api {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Api api = (Api) o;
+        ApiModel api = (ApiModel) o;
         return Objects.equals(path, api.path);
     }
 

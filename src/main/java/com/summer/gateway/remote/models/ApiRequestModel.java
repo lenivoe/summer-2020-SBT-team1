@@ -3,13 +3,13 @@ package com.summer.gateway.remote.models;
 
 import java.util.Objects;
 
-public class ApiModelRequest {
+public class ApiRequestModel {
 
     private final String method_type;
     private final String path;
     private final String api_version;
 
-    public ApiModelRequest(String method_type, String path, String api_version) {
+    public ApiRequestModel(String method_type, String path, String api_version) {
         this.method_type = method_type;
         this.path = path;
         this.api_version = api_version;
@@ -40,7 +40,7 @@ public class ApiModelRequest {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ApiModelRequest apiRequest = (ApiModelRequest) o;
+        ApiRequestModel apiRequest = (ApiRequestModel) o;
         return Objects.equals(method_type, apiRequest.method_type) &&
                 Objects.equals(path, apiRequest.path) &&
                 Objects.equals(api_version, apiRequest.api_version);

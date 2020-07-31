@@ -4,15 +4,15 @@ package com.summer.gateway.remote.models;
 import java.util.List;
 import java.util.Objects;
 
-public class PublishModelRequest {
+public class PublishRequestModel {
 
     private final String address;
     private final String port;
     private final String name_service;
     private final String version_service;
-    private final List<ApiModelRequest> api;
+    private final List<ApiRequestModel> api;
 
-    public PublishModelRequest(String address, String port, String name_service, String version_service, List<ApiModelRequest> api) {
+    public PublishRequestModel(String address, String port, String name_service, String version_service, List<ApiRequestModel> api) {
         this.address = address;
         this.port = port;
         this.name_service = name_service;
@@ -36,7 +36,7 @@ public class PublishModelRequest {
         return version_service;
     }
 
-    public List<ApiModelRequest> getApi() {
+    public List<ApiRequestModel> getApi() {
         return api;
     }
 
@@ -55,7 +55,7 @@ public class PublishModelRequest {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        PublishModelRequest that = (PublishModelRequest) o;
+        PublishRequestModel that = (PublishRequestModel) o;
         return Objects.equals(address, that.address) &&
                 Objects.equals(port, that.port) &&
                 Objects.equals(name_service, that.name_service) &&

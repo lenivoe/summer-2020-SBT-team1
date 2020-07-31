@@ -1,7 +1,7 @@
 package com.summer.gateway.discovery;
 
 import com.summer.gateway.dao.repositories.RemoteServiceRepository;
-import com.summer.gateway.discovery.model.GroupRemoteService;
+import com.summer.gateway.discovery.model.GroupRemoteServiceModel;
 import com.summer.gateway.discovery.model.StateService;
 import com.summer.gateway.proxy.RefreshableRoutesLocator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class StateServiceHandler {
     public void stateChanged(StateService stateService) {
         if (stateService.equals(StateService.ACTIVE)) {
             refreshableRoutesLocator.clearRoutes();
-            List<GroupRemoteService> groupRemoteServices = serviceRepository.getActiveGroup();
+            List<GroupRemoteServiceModel> groupRemoteServices = serviceRepository.getActiveGroup();
             for (var group : groupRemoteServices) {
                 if (group.isActive()) {
                     group.getApi().forEach(it -> refreshableRoutesLocator.addRoute(it.getPath()));

@@ -1,10 +1,10 @@
 package com.summer.gateway.discovery;
 
 import com.summer.gateway.dao.repositories.RemoteServicesRepositoryImpl;
-import com.summer.gateway.discovery.model.Api;
-import com.summer.gateway.discovery.model.RemoteService;
-import com.summer.gateway.remote.models.PublishModelRequest;
-import com.summer.gateway.remote.models.PublishModelResponse;
+import com.summer.gateway.discovery.model.ApiModel;
+import com.summer.gateway.discovery.model.RemoteServiceModel;
+import com.summer.gateway.remote.models.PublishRequestModel;
+import com.summer.gateway.remote.models.PublishResponseModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -37,22 +37,21 @@ public class ServiceRegistrar {
         this.applicationContext = applicationContext;
     }
 
-    public PublishModelResponse register(PublishModelRequest request) throws URISyntaxException {
+    public PublishResponseModel register(PublishRequestModel request) throws URISyntaxException {
         String id = UUID.randomUUID().toString();
         String nameService = request.getName_service();
-        String versionService = request.getVersion_service();
-        List<Api> api = request.getApi().stream().map(it -> new Api(it.getPath())).collect(Collectors.toList());
+        List<ApiModel> api = request.getApi().stream().map(it -> new ApiModel(it.getPath())).collect(Collectors.toList());
 
-        RemoteService remoteService = new RemoteService(
+        RemoteServiceModel remoteService = new RemoteServiceModel(
                 id,
-                makeURI(request.getAddress(), request.getPort())
+                request.getVersion_service(),
+                makeURI(request.getAddress(), request.getPort()),
+                applicationContext.getBean(StateServiceHandler.class)
         );
 
-        remoteService.setStateServiceHandler(applicationContext.getBean(StateServiceHandler.class));
+        servicesRepository.addService(nameService, api, remoteService);
 
-        servicesRepository.addService(nameService, versionService, api, remoteService);
-
-        return new PublishModelResponse(id, pingInterval);
+        return new PublishResponseModel(id, pingInterval);
     }
 
     private URI makeURI(String address, String port) throws URISyntaxException {
