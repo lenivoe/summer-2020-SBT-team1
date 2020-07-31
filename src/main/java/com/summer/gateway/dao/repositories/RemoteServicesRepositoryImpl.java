@@ -1,70 +1,53 @@
 package com.summer.gateway.dao.repositories;
 
+import com.summer.gateway.discovery.model.Api;
+import com.summer.gateway.discovery.model.GroupRemoteService;
 import com.summer.gateway.discovery.model.RemoteService;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class RemoteServicesRepositoryImpl implements RemoteServiceRepository {
 
-    private final Map<String, List<RemoteService>> services = new HashMap<>();
+    private final List<GroupRemoteService> groupRemoteServices = new LinkedList<>();
 
-    public void addService(String nameService, RemoteService newService) {
-        List<RemoteService> instances = services.get(nameService);
-        if (instances != null) {
-            //TODO(
-            // Возможны ситуации:
-            // 1 - Конфликт апи
-            // 2 - Сервис с таким адресов уже зарегистрирован отклонить или обновить?
-            // )
-            instances.add(newService);
+    @Override
+    public void addService(String nameService, String versionService, List<Api> api, RemoteService newInstance) {
+        GroupRemoteService group = findGroupByNameAndVersion(nameService, versionService);
+        if (group != null) {
+            group.addInstance(newInstance);
         } else {
-            services.put(nameService, new LinkedList<>() {{
-                add(newService);
-            }});
+            GroupRemoteService newGrope = new GroupRemoteService(nameService, versionService, api);
+            newGrope.addInstance(newInstance);
+            groupRemoteServices.add(newGrope);
         }
     }
 
     @Override
-    public Set<String> getServiceName() {
-        return services.keySet();
+    public RemoteService findInstanceById(String id) {
+        for (var group : groupRemoteServices) {
+            RemoteService service = group.getInstanceById(id);
+            if (service != null) return service;
+        }
+        return null;
     }
 
     @Override
-    public List<RemoteService> findInstancesByPath(String path) {
-        String t1 = path.split("/")[0];
-        // TODO(Надо сделать нормальный компоратор)
-        for (var name : getServiceName()) {
-            var instance = services.get(name).get(0);
-            for (var api : instance.getApi()) {
-                if (t1.equals(api.getPath().split("/")[0])) {
-                    return services.get(name);
-                }
+    public GroupRemoteService findGroupByNameAndVersion(String nameService, String versionService) {
+        for (var group : groupRemoteServices) {
+            if (group.getNameService().equals(nameService) && group.getVersionService().equals(versionService)) {
+                return group;
             }
         }
         return null;
     }
 
     @Override
-    public List<RemoteService> getInstanceIsReady() {
-        return null;
+    public List<GroupRemoteService> getActiveGroup() {
+        return groupRemoteServices.stream().filter(GroupRemoteService::isActive).collect(Collectors.toList());
     }
 
-    @Override
-    public List<RemoteService> getInstanceIsReadyByPath() {
-        return null;
-    }
-
-    @Override
-    public RemoteService findInstanceById(String uuid) {
-        for (var name : getServiceName()) {
-            for (var service : services.get(name)) {
-                if (service.getUuid().equals(uuid)) {
-                    return service;
-                }
-            }
-        }
-        return null;
-    }
 }

@@ -6,7 +6,7 @@ import com.summer.gateway.discovery.model.RemoteService;
 import com.summer.gateway.remote.models.PublishModelRequest;
 import com.summer.gateway.remote.models.PublishModelResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 public class ServiceRegistrar {
 
     private RemoteServicesRepositoryImpl servicesRepository;
+    private ApplicationContext applicationContext;
 
     //TODO("Надо внедрять из вне")
     private final int pingInterval = 10_000;
@@ -31,22 +32,27 @@ public class ServiceRegistrar {
         this.servicesRepository = servicesRepository;
     }
 
+    @Autowired
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
+
     public PublishModelResponse register(PublishModelRequest request) throws URISyntaxException {
-        String uuid = UUID.randomUUID().toString();
+        String id = UUID.randomUUID().toString();
         String nameService = request.getName_service();
+        String versionService = request.getVersion_service();
         List<Api> api = request.getApi().stream().map(it -> new Api(it.getPath())).collect(Collectors.toList());
 
         RemoteService remoteService = new RemoteService(
-                uuid,
-                nameService,
-                request.getVersion_service(),
-                makeURI(request.getAddress(), request.getPort()),
-                api
+                id,
+                makeURI(request.getAddress(), request.getPort())
         );
 
-        servicesRepository.addService(nameService, remoteService);
+        remoteService.setStateServiceHandler(applicationContext.getBean(StateServiceHandler.class));
 
-        return new PublishModelResponse(uuid, pingInterval);
+        servicesRepository.addService(nameService, versionService, api, remoteService);
+
+        return new PublishModelResponse(id, pingInterval);
     }
 
     private URI makeURI(String address, String port) throws URISyntaxException {

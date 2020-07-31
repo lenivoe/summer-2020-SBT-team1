@@ -1,6 +1,8 @@
 package com.summer.gateway.proxy;
 
 import com.summer.gateway.dao.repositories.RemoteServiceRepository;
+import com.summer.gateway.discovery.model.GroupRemoteService;
+import com.summer.gateway.discovery.model.StateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -11,6 +13,7 @@ import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR;
 
@@ -42,8 +45,16 @@ public class CustomGatewayFilter implements GatewayFilter, Ordered {
         System.out.println("Path: " + path);
         System.out.println("Query: " + query);
 
-        // Здесь мы должны как-то на основание path должны узнать сервис на который переадресуем запрос
-        String forwardUri = remoteServiceRepository.findInstancesByPath(path).get(0).getUri().toString();
+        String forwardUri = null;
+
+        List<GroupRemoteService> groupRemoteServices = remoteServiceRepository.getActiveGroup();
+        for (var group : groupRemoteServices) {
+            if (group.hasApi(path)) {
+                forwardUri = group.getInstancesByState(StateService.ACTIVE).get(0).getUri().toString();
+            }
+        }
+
+        if (forwardUri == null) throw new RuntimeException("Плохо очень");
 
         // Формируем итоговый запрос
         URI result = null;
