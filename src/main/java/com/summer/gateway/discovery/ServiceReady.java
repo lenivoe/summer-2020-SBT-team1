@@ -21,7 +21,6 @@ public class ServiceReady {
 
     public void ready(String instanceId) {
         RemoteServiceModel service = remoteServiceRepository.findInstanceById(instanceId);
-        if (service == null) return;
         service.setState(StateService.ACTIVE);
     }
 }

@@ -46,10 +46,6 @@ public class RefreshableRoutesLocator implements RouteLocator {
         this.route = this.routesBuilder.build().getRoutes();
     }
 
-    private boolean isNullOrEmpty(String s) {
-        return s == null || s.equals("");
-    }
-
     /**
      * Remove all routes.
      */

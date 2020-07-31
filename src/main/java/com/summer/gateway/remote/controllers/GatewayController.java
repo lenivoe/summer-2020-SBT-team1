@@ -36,9 +36,14 @@ public class GatewayController {
 
     @PostMapping("publish")
     public @ResponseBody
-    PublishResponseModel publish(@RequestBody PublishRequestModel request) throws URISyntaxException {
+    PublishResponseModel publish(@RequestBody PublishRequestModel request) {
         requestValidator.validate(request);
-        return serviceRegistrar.register(request);
+        try {
+            return serviceRegistrar.register(request);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @GetMapping("ping/{instance_id}")
