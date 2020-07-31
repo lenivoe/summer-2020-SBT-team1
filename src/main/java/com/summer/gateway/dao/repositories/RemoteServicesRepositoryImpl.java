@@ -28,31 +28,45 @@ public class RemoteServicesRepositoryImpl implements RemoteServiceRepository {
 
     @Override
     public RemoteServiceModel findInstanceById(String id) {
-        for (var group : groupRemoteServices) {
-            RemoteServiceModel service = group.getInstanceById(id);
-            if (service != null) return service;
-        }
-        return null;
+        return getAllServices()
+                .stream()
+                .filter(f -> f.getId().equals(id))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
     public GroupRemoteServiceModel findGroupByName(String nameService) {
-        for (var group : groupRemoteServices) {
-            if (group.getNameService().equals(nameService)) {
-                return group;
-            }
-        }
-        return null;
+        return groupRemoteServices
+                .stream()
+                .filter(f -> f.getNameService().equals(nameService))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
     public List<GroupRemoteServiceModel> getActiveGroup() {
-        return groupRemoteServices.stream().filter(GroupRemoteServiceModel::isActive).collect(Collectors.toList());
+        return groupRemoteServices
+                .stream()
+                .filter(GroupRemoteServiceModel::isActive)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<ApiModel> getAllApi() {
-        return groupRemoteServices.stream().map(GroupRemoteServiceModel::getApi).flatMap(List::stream).collect(Collectors.toList());
+        return groupRemoteServices
+                .stream()
+                .map(GroupRemoteServiceModel::getApi)
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
     }
 
+    @Override
+    public List<RemoteServiceModel> getAllServices() {
+        return groupRemoteServices
+                .stream()
+                .map(GroupRemoteServiceModel::getInstances)
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
+    }
 }

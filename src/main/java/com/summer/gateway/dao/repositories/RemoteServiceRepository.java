@@ -17,4 +17,6 @@ public interface RemoteServiceRepository {
     List<GroupRemoteServiceModel> getActiveGroup();
 
     List<ApiModel> getAllApi();
+
+    List<RemoteServiceModel> getAllServices();
 }
