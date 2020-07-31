@@ -5,6 +5,7 @@ import com.summer.gateway.discovery.ServiceReady;
 import com.summer.gateway.discovery.ServiceRegistrar;
 import com.summer.gateway.remote.models.PublishRequestModel;
 import com.summer.gateway.remote.models.PublishResponseModel;
+import com.summer.gateway.remote.validators.PublishRequestValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +17,7 @@ public class GatewayController {
 
     private ServiceRegistrar serviceRegistrar;
     private ServiceReady serviceReady;
+    private PublishRequestValidator requestValidator;
 
     @Autowired
     public void setServiceRegistrar(ServiceRegistrar serviceRegistrar) {
@@ -27,9 +29,15 @@ public class GatewayController {
         this.serviceReady = serviceReady;
     }
 
+    @Autowired
+    public void setRequestValidator(PublishRequestValidator requestValidator) {
+        this.requestValidator = requestValidator;
+    }
+
     @PostMapping("publish")
     public @ResponseBody
     PublishResponseModel publish(@RequestBody PublishRequestModel request) throws URISyntaxException {
+        requestValidator.validate(request);
         return serviceRegistrar.register(request);
     }
 

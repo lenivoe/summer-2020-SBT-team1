@@ -15,4 +15,6 @@ public interface RemoteServiceRepository {
     GroupRemoteServiceModel findGroupByName(String nameService);
 
     List<GroupRemoteServiceModel> getActiveGroup();
+
+    List<ApiModel> getAllApi();
 }

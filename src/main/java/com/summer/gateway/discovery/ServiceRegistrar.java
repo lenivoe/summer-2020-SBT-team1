@@ -6,6 +6,7 @@ import com.summer.gateway.discovery.model.RemoteServiceModel;
 import com.summer.gateway.remote.models.PublishRequestModel;
 import com.summer.gateway.remote.models.PublishResponseModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
@@ -24,8 +25,8 @@ public class ServiceRegistrar {
     private RemoteServicesRepositoryImpl servicesRepository;
     private ApplicationContext applicationContext;
 
-    //TODO("Надо внедрять из вне")
-    private final int pingInterval = 10_000;
+    @Value("${ping.interval}")
+    private int pingInterval;
 
     @Autowired
     public void setServicesRepository(RemoteServicesRepositoryImpl servicesRepository) {
@@ -61,5 +62,4 @@ public class ServiceRegistrar {
             return new URI(address + ":" + port);
         }
     }
-
 }

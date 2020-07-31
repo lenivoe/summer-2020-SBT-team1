@@ -50,4 +50,9 @@ public class RemoteServicesRepositoryImpl implements RemoteServiceRepository {
         return groupRemoteServices.stream().filter(GroupRemoteServiceModel::isActive).collect(Collectors.toList());
     }
 
+    @Override
+    public List<ApiModel> getAllApi() {
+        return groupRemoteServices.stream().map(GroupRemoteServiceModel::getApi).flatMap(List::stream).collect(Collectors.toList());
+    }
+
 }

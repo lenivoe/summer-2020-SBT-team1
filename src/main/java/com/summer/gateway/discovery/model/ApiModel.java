@@ -21,6 +21,10 @@ public class ApiModel {
         return pattern.matcher(path).find();
     }
 
+    public Pattern getPattern() {
+        return pattern;
+    }
+
     private Pattern makePatten() {
         var segments = path.split("/");
         StringBuilder regex = new StringBuilder();
