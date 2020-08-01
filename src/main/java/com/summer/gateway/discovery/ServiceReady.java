@@ -24,6 +24,6 @@ public class ServiceReady {
         InstanceService instance = instanceRepository.findByUid(instanceUid);
         instance.setState(StateService.ACTIVE);
         instanceRepository.save(instance);
-        routeHandler.stateInstanceChanged(StateService.ACTIVE);
+        routeHandler.stateInstanceChanged(instance);
     }
 }

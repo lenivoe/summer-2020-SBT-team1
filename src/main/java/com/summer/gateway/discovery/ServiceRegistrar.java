@@ -83,7 +83,7 @@ public class ServiceRegistrar {
     }
 
     /**
-     * Если мы создаем новую группу, надо проверить что ее API не будет конфликтовать с другими группами
+     * Если мы добавлем новый сервис, надо проверить что его API не будет конфликтовать с другими
      */
     private void checkApiNewGroup(RemoteService service, Set<Api> requestApi) {
         if (service == null) {
@@ -107,17 +107,6 @@ public class ServiceRegistrar {
     }
 
     /**
-     * Создание URI, завит от переданных параметров
-     */
-    private URI createURI(String address, String port) throws URISyntaxException {
-        if (port == null || port.equals("")) {
-            return new URI(address);
-        } else {
-            return new URI(address + ":" + port);
-        }
-    }
-
-    /**
      * Проверка на то что API у нового экземпляра сервиса с именем nameService
      * такое же, если нет считаем что ошибка в запросе от этого instance
      */
@@ -137,6 +126,17 @@ public class ServiceRegistrar {
 
         if (count != requestApi.size()) {
             throw new ApiBad("Api of new instance " + nameService + " is incorrect");
+        }
+    }
+
+    /**
+     * Создание URI, завит от переданных параметров
+     */
+    private URI createURI(String address, String port) throws URISyntaxException {
+        if (port == null || port.equals("")) {
+            return new URI(address);
+        } else {
+            return new URI(address + ":" + port);
         }
     }
 }

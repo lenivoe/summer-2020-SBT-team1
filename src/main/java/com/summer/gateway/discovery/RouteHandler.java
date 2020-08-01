@@ -1,5 +1,7 @@
 package com.summer.gateway.discovery;
 
+import com.summer.gateway.dao.entity.InstanceService;
+import com.summer.gateway.dao.entity.RemoteService;
 import com.summer.gateway.dao.entity.StateService;
 import com.summer.gateway.dao.repositories.RemoteServiceRepository;
 import com.summer.gateway.proxy.RefreshableRoutesLocator;
@@ -19,16 +21,21 @@ public class RouteHandler {
         this.serviceRepository = serviceRepository;
     }
 
-    public void stateInstanceChanged(StateService stateService) {
-        if (stateService.equals(StateService.ACTIVE)) {
-            refreshableRoutesLocator.clearRoutes();
-            for (var service : this.serviceRepository.findAll()) {
-                if (service.isActive() && !service.isGateway()) {
-                    service.getApi().forEach(it -> refreshableRoutesLocator.addRoute(it.getPath()));
-                }
-                service.setGateway(true);
+    /**
+     * Метод обрабатывает изменение состояние какого либо экземпляра
+     */
+    public void stateInstanceChanged(InstanceService instanceService) {
+        // Если состояние экзепмляра стало ACTIVE, на проверить опубликовано ли API
+        // того сервиса, которому он принадлежит, если нет, опубликовать
+        if (instanceService.getState().equals(StateService.ACTIVE)) {
+            RemoteService service = serviceRepository.findByInstancesEquals(instanceService);
+            if (!service.isGateway()) {
+                refreshableRoutesLocator.clearRoutes();
+                service.getApi().forEach(it -> refreshableRoutesLocator.addRoute(it.getPath()));
+                refreshableRoutesLocator.buildRoutes();
             }
-            refreshableRoutesLocator.buildRoutes();
+            service.setGateway(true);
+            serviceRepository.save(service);
         }
     }
 }

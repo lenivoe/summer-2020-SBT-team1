@@ -1,7 +1,5 @@
 package com.summer.gateway.dao.entity;
 
-import org.hibernate.annotations.CollectionType;
-
 import javax.persistence.*;
 import java.net.URI;
 import java.util.Objects;

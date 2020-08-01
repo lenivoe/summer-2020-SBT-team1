@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR;
 
 @Component
-public class CustomGatewayFilter implements GatewayFilter, Ordered {
+public class BalancedGatewayFilter implements GatewayFilter, Ordered {
 
     @Override
     public int getOrder() {
@@ -31,7 +31,7 @@ public class CustomGatewayFilter implements GatewayFilter, Ordered {
     private final RemoteServiceRepository serviceRepository;
 
     @Autowired
-    public CustomGatewayFilter(@NonNull final RemoteServiceRepository serviceRepository) {
+    public BalancedGatewayFilter(@NonNull final RemoteServiceRepository serviceRepository) {
         this.serviceRepository = serviceRepository;
     }
 
