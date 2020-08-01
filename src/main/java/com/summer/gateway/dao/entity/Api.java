@@ -1,31 +1,38 @@
-package com.summer.gateway.discovery.model;
+package com.summer.gateway.dao.entity;
 
+import javax.persistence.*;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-public class ApiModel {
+@Entity
+public class Api {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
-    private final String path;
-    private final Pattern pattern;
+    private String path;
+    @Transient
+    private Pattern pattern;
 
-    public ApiModel(String path) {
+    public Api() {
+    }
+
+    public Api(String path) {
         this.path = path;
-        this.pattern = makePatten();
     }
 
-    public String getPath() {
-        return path;
-    }
-
+    /**
+     * Сравнить пути
+     */
     public boolean comparePath(String path) {
+        if (pattern == null) this.pattern = createPatten();
         return pattern.matcher(path).find();
     }
 
-    public Pattern getPattern() {
-        return pattern;
-    }
-
-    private Pattern makePatten() {
+    /**
+     * Создать паттерн для сравнения
+     */
+    private Pattern createPatten() {
         var segments = path.split("/");
         StringBuilder regex = new StringBuilder();
         for (var s : segments) {
@@ -41,18 +48,35 @@ public class ApiModel {
         return Pattern.compile(regex.toString());
     }
 
-    @Override
-    public String toString() {
-        return "Api{" +
-                "path='" + path + '\'' +
-                '}';
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public Pattern getPattern() {
+        return pattern;
+    }
+
+    public void setPattern(Pattern pattern) {
+        this.pattern = pattern;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ApiModel api = (ApiModel) o;
+        Api api = (Api) o;
         return Objects.equals(path, api.path);
     }
 
@@ -60,4 +84,6 @@ public class ApiModel {
     public int hashCode() {
         return Objects.hash(path);
     }
+
+
 }

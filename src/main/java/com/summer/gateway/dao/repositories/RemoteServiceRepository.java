@@ -1,22 +1,8 @@
 package com.summer.gateway.dao.repositories;
 
-import com.summer.gateway.discovery.model.ApiModel;
-import com.summer.gateway.discovery.model.GroupRemoteServiceModel;
-import com.summer.gateway.discovery.model.RemoteServiceModel;
+import com.summer.gateway.dao.entity.RemoteService;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-
-
-public interface RemoteServiceRepository {
-    void addService(String nameService, List<ApiModel> api, RemoteServiceModel newInstance);
-
-    RemoteServiceModel findInstanceById(String id);
-
-    GroupRemoteServiceModel findGroupByName(String nameService);
-
-    List<GroupRemoteServiceModel> getActiveGroup();
-
-    List<ApiModel> getAllApi();
-
-    List<RemoteServiceModel> getAllServices();
+public interface RemoteServiceRepository extends JpaRepository<RemoteService, Long> {
+    RemoteService findByNameService(String nameService);
 }

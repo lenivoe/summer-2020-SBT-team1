@@ -3,10 +3,11 @@ package com.summer.gateway.remote.controllers;
 
 import com.summer.gateway.discovery.ServiceReady;
 import com.summer.gateway.discovery.ServiceRegistrar;
-import com.summer.gateway.remote.models.PublishRequestModel;
-import com.summer.gateway.remote.models.PublishResponseModel;
+import com.summer.gateway.remote.model.PublishRequestModel;
+import com.summer.gateway.remote.model.PublishResponseModel;
 import com.summer.gateway.remote.validators.PublishRequestValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URISyntaxException;
@@ -14,25 +15,19 @@ import java.net.URISyntaxException;
 @RestController
 @RequestMapping("gateway")
 public class GatewayController {
-
-    private ServiceRegistrar serviceRegistrar;
-    private ServiceReady serviceReady;
-    private PublishRequestValidator requestValidator;
+    private final ServiceRegistrar serviceRegistrar;
+    private final ServiceReady serviceReady;
+    private final PublishRequestValidator requestValidator;
 
     @Autowired
-    public void setServiceRegistrar(ServiceRegistrar serviceRegistrar) {
+    public GatewayController(@NonNull final ServiceRegistrar serviceRegistrar,
+                             @NonNull final ServiceReady serviceReady,
+                             @NonNull final PublishRequestValidator requestValidator) {
         this.serviceRegistrar = serviceRegistrar;
-    }
-
-    @Autowired
-    public void setServiceReady(ServiceReady serviceReady) {
         this.serviceReady = serviceReady;
-    }
-
-    @Autowired
-    public void setRequestValidator(PublishRequestValidator requestValidator) {
         this.requestValidator = requestValidator;
     }
+
 
     @PostMapping("publish")
     public @ResponseBody

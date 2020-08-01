@@ -1,19 +1,22 @@
 package com.summer.gateway.proxy;
 
+import com.summer.gateway.dao.entity.RemoteService;
+import com.summer.gateway.dao.entity.StateService;
 import com.summer.gateway.dao.repositories.RemoteServiceRepository;
-import com.summer.gateway.discovery.model.GroupRemoteServiceModel;
-import com.summer.gateway.discovery.model.StateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.core.Ordered;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR;
 
@@ -25,12 +28,13 @@ public class CustomGatewayFilter implements GatewayFilter, Ordered {
         return 10001;
     }
 
-    private RemoteServiceRepository remoteServiceRepository;
+    private final RemoteServiceRepository serviceRepository;
 
     @Autowired
-    public void setRemoteServiceRepository(RemoteServiceRepository remoteServiceRepository) {
-        this.remoteServiceRepository = remoteServiceRepository;
+    public CustomGatewayFilter(@NonNull final RemoteServiceRepository serviceRepository) {
+        this.serviceRepository = serviceRepository;
     }
+
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -47,10 +51,14 @@ public class CustomGatewayFilter implements GatewayFilter, Ordered {
 
         String forwardUri = null;
 
-        List<GroupRemoteServiceModel> groupRemoteServices = remoteServiceRepository.getActiveGroup();
-        for (var group : groupRemoteServices) {
-            if (group.hasApi(path)) {
-                forwardUri = group.getInstancesByState(StateService.ACTIVE).get(0).getUri().toString();
+        List<RemoteService> remoteServices = new LinkedList<>();
+        serviceRepository.findAll().iterator().forEachRemaining(remoteServices::add);
+
+        remoteServices = remoteServices.stream().filter(RemoteService::isActive).collect(Collectors.toList());
+
+        for (var instance : remoteServices) {
+            if (instance.hasApi(path)) {
+                forwardUri = instance.getInstancesByState(StateService.ACTIVE).get(0).getUri().toString();
             }
         }
 

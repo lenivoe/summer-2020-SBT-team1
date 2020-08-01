@@ -1,11 +1,10 @@
 package com.summer.gateway.remote.validators;
 
 import com.summer.gateway.remote.exceptions.EmptyField;
-import com.summer.gateway.remote.models.ApiRequestModel;
-import com.summer.gateway.remote.models.PublishRequestModel;
+import com.summer.gateway.remote.model.ApiRequestModel;
+import com.summer.gateway.remote.model.PublishRequestModel;
 import org.springframework.stereotype.Component;
-import java.net.URI;
-import java.net.URISyntaxException;
+
 import java.util.List;
 
 @Component

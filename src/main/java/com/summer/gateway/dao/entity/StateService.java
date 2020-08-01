@@ -1,4 +1,4 @@
-package com.summer.gateway.discovery.model;
+package com.summer.gateway.dao.entity;
 
 public enum StateService {
     PUBLISHED,
