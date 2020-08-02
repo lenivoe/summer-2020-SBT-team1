@@ -25,7 +25,6 @@ public class PublishRequestValidator {
             ApiRequestModel api = requestModelApi.get(i);
             if (isNullOrEmpty(api.getPath())) throw new EmptyField("api[" + i + "] path");
             if (isNullOrEmpty(api.getApi_version())) throw new EmptyField("api[" + i + "] api_version");
-            if (isNullOrEmpty(api.getMethod_type())) throw new EmptyField("api[" + i + "] method_type");
         }
         //TODO("Скорей всего нужна проверка на корректность address and path в списке апи")
     }

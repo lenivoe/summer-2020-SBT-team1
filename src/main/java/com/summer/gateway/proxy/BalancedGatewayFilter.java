@@ -1,8 +1,8 @@
 package com.summer.gateway.proxy;
 
-import com.summer.gateway.dao.entity.RemoteService;
+import com.summer.gateway.dao.entity.Api;
 import com.summer.gateway.dao.entity.StateService;
-import com.summer.gateway.dao.repositories.RemoteServiceRepository;
+import com.summer.gateway.dao.repositories.ApiRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -14,25 +14,22 @@ import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR;
 
 @Component
 public class BalancedGatewayFilter implements GatewayFilter, Ordered {
-
     @Override
     public int getOrder() {
         return 10001;
     }
 
-    private final RemoteServiceRepository serviceRepository;
+    private final ApiRepository apiRepository;
 
     @Autowired
-    public BalancedGatewayFilter(@NonNull final RemoteServiceRepository serviceRepository) {
-        this.serviceRepository = serviceRepository;
+    public BalancedGatewayFilter(@NonNull final ApiRepository apiRepository) {
+        this.apiRepository = apiRepository;
     }
 
 
@@ -51,14 +48,12 @@ public class BalancedGatewayFilter implements GatewayFilter, Ordered {
 
         String forwardUri = null;
 
-        List<RemoteService> remoteServices = new LinkedList<>();
-        serviceRepository.findAll().iterator().forEachRemaining(remoteServices::add);
+        List<Api> api = apiRepository.findAll();
 
-        remoteServices = remoteServices.stream().filter(RemoteService::isActive).collect(Collectors.toList());
-
-        for (var instance : remoteServices) {
-            if (instance.hasApi(path)) {
-                forwardUri = instance.getInstancesByState(StateService.ACTIVE).get(0).getUri().toString();
+        for (var a : api) {
+            if (a.comparePath(path)) {
+                forwardUri = a.getInstancesByState(StateService.ACTIVE).get(0).getAddress();
+                break;
             }
         }
 

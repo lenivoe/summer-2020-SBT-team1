@@ -1,41 +1,36 @@
 package com.summer.gateway.discovery;
 
-import com.summer.gateway.dao.entity.InstanceService;
-import com.summer.gateway.dao.entity.RemoteService;
-import com.summer.gateway.dao.entity.StateService;
-import com.summer.gateway.dao.repositories.RemoteServiceRepository;
+import com.summer.gateway.dao.entity.Api;
+import com.summer.gateway.dao.repositories.ApiRepository;
 import com.summer.gateway.proxy.RefreshableRoutesLocator;
+import com.summer.gateway.remote.model.ApiRequestModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class RouteHandler {
     private final RefreshableRoutesLocator refreshableRoutesLocator;
-    private final RemoteServiceRepository serviceRepository;
+    private final ApiRepository apiRepository;
 
     @Autowired
     public RouteHandler(@NonNull final RefreshableRoutesLocator refreshableRoutesLocator,
-                        @NonNull final RemoteServiceRepository serviceRepository) {
+                        @NonNull final ApiRepository apiRepository) {
         this.refreshableRoutesLocator = refreshableRoutesLocator;
-        this.serviceRepository = serviceRepository;
+        this.apiRepository = apiRepository;
     }
 
-    /**
-     * Метод обрабатывает изменение состояние какого либо экземпляра
-     */
-    public void stateInstanceChanged(InstanceService instanceService) {
-        // Если состояние экзепмляра стало ACTIVE, на проверить опубликовано ли API
-        // того сервиса, которому он принадлежит, если нет, опубликовать
-        if (instanceService.getState().equals(StateService.ACTIVE)) {
-            RemoteService service = serviceRepository.findByInstancesEquals(instanceService);
-            if (!service.isGateway()) {
-                refreshableRoutesLocator.clearRoutes();
-                service.getApi().forEach(it -> refreshableRoutesLocator.addRoute(it.getPath()));
-                refreshableRoutesLocator.buildRoutes();
-            }
-            service.setGateway(true);
-            serviceRepository.save(service);
-        }
+    public void updateRoutes() {
+        this.refreshableRoutesLocator.clearRoutes();
+
+        // TODO(Надо получать из базы только активные API, а не все)
+        List<Api> api = apiRepository.findAll().stream().filter(Api::isActive).collect(Collectors.toList());
+
+        api.forEach(it -> this.refreshableRoutesLocator.addRoute(it.getPath()));
+        this.refreshableRoutesLocator.buildRoutes();
     }
+
 }
