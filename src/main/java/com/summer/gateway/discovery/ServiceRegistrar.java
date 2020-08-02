@@ -6,6 +6,7 @@ import com.summer.gateway.dao.entity.Word;
 import com.summer.gateway.dao.repositories.ApiRepository;
 import com.summer.gateway.dao.repositories.InstanceRepository;
 import com.summer.gateway.dao.repositories.WordRepository;
+import com.summer.gateway.remote.exceptions.ApiBad;
 import com.summer.gateway.remote.exceptions.URIBad;
 import com.summer.gateway.remote.model.PublishRequestModel;
 import com.summer.gateway.remote.model.PublishResponseModel;
@@ -83,7 +84,12 @@ public class ServiceRegistrar {
 
     private Api apiIsExist(Api newApi, List<Api> api) {
         for (var a : api) {
-            if (a.getPath().equals(newApi.getPath())) return a;
+            if (a.comparePath(newApi.getPath())) {
+                if (!a.getPath().equals(newApi.getPath())) {
+                    throw new ApiBad("Api is ambiguous");
+                }
+                return a;
+            }
         }
         return null;
     }
