@@ -45,26 +45,48 @@ public class ServiceRegistrar {
         URI uri = createURI(request.getAddress(), request.getPort());
         checkURI(uri);
 
-        String uuid = UUID.randomUUID().toString();
-
         // Добавляемые API
-        List<Api> api = request.getApi().stream().map(it -> {
+        List<Api> requestApi = request.getApi().stream().map(it -> {
             var words = pathToWord(it.getPath());
             return new Api(words, it.getPath(), words.size());
         }).collect(Collectors.toList());
 
-        // Все эти API может исполнить этот экземляр
+        // Найти соответствия, возможно это апи уже присутствует
+        // Поделить апи на новое и старое
+        List<Api> newApi = new LinkedList<>();
+        List<Api> oldApi = new LinkedList<>();
+        List<Api> allApi = apiRepository.findAll();
+        for (var na : requestApi) {
+            Api find = apiIsExist(na, allApi);
+            if (find != null) {
+                oldApi.add(find);
+            } else {
+                newApi.add(na);
+            }
+        }
+
+        // Все эти API имплементирует этот экземляр
+        String uuid = UUID.randomUUID().toString();
         Instance instance = new Instance(uuid, request.getName_service(), uri.toString(), request.getVersion_service());
-        api.forEach(it -> it.addInstance(instance));
+        newApi.forEach(it -> it.addInstance(instance));
+        oldApi.forEach(it -> it.addInstance(instance));
 
         // Сохранение
         instanceRepository.save(instance);
-        api.forEach(it -> wordRepository.saveAll(it.getWords()));
-        apiRepository.saveAll(api);
+        newApi.forEach(it -> wordRepository.saveAll(it.getWords()));
+        apiRepository.saveAll(newApi);
+
+        apiRepository.saveAll(oldApi);
 
         return new PublishResponseModel(uuid, pingInterval);
     }
 
+    private Api apiIsExist(Api newApi, List<Api> api) {
+        for (var a : api) {
+            if (a.getPath().equals(newApi.getPath())) return a;
+        }
+        return null;
+    }
 
     /**
      * Конвертировать path в word

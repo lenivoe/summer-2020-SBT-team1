@@ -17,7 +17,7 @@ public class Api {
     private String version;
     private int wordsAmount;
     private String path;
-    private boolean isActive;
+    private boolean isActive = false;
 
     @OneToMany
     @LazyCollection(LazyCollectionOption.FALSE)
