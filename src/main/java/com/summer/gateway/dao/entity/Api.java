@@ -33,9 +33,10 @@ public class Api {
     public Api() {
     }
 
-    public Api(List<Word> words, String path, int wordsAmount) {
+    public Api(List<Word> words, String path, String version, int wordsAmount) {
         this.words = words;
         this.path = path;
+        this.version = version;
         this.wordsAmount = wordsAmount;
     }
 

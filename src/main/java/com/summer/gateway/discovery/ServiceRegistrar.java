@@ -49,7 +49,7 @@ public class ServiceRegistrar {
         // Добавляемые API
         List<Api> requestApi = request.getApi().stream().map(it -> {
             var words = pathToWord(it.getPath());
-            return new Api(words, it.getPath(), words.size());
+            return new Api(words, it.getPath(), it.getApi_version(), words.size());
         }).collect(Collectors.toList());
 
         // Найти соответствия, возможно это апи уже присутствует
