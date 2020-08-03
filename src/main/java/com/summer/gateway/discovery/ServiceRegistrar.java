@@ -29,16 +29,20 @@ public class ServiceRegistrar {
     private final InstanceRepository instanceRepository;
     private final WordRepository wordRepository;
 
+    private final ServicePing servicePing;
+
     @Value("${ping.interval}")
     private int pingInterval;
 
-    @Autowired
-    public ServiceRegistrar(@NonNull final ApiRepository apiRepository,
-                            @NonNull final InstanceRepository instanceRepository,
-                            @NonNull final WordRepository wordRepository) {
+        @Autowired
+        public ServiceRegistrar(@NonNull final ApiRepository apiRepository,
+                                @NonNull final InstanceRepository instanceRepository,
+                                @NonNull final WordRepository wordRepository,
+                                @NonNull final ServicePing servicePing) {
         this.apiRepository = apiRepository;
         this.instanceRepository = instanceRepository;
         this.wordRepository = wordRepository;
+        this.servicePing = servicePing;
     }
 
     public PublishResponseModel register(PublishRequestModel request) throws URISyntaxException {
@@ -76,8 +80,9 @@ public class ServiceRegistrar {
         instanceRepository.save(instance);
         newApi.forEach(it -> wordRepository.saveAll(it.getWords()));
         apiRepository.saveAll(newApi);
-
         apiRepository.saveAll(oldApi);
+
+        servicePing.addInstance(uuid);
 
         return new PublishResponseModel(uuid, pingInterval);
     }

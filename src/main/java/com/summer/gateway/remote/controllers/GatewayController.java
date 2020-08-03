@@ -1,6 +1,7 @@
 package com.summer.gateway.remote.controllers;
 
 
+import com.summer.gateway.discovery.ServiceDelete;
 import com.summer.gateway.discovery.ServiceReady;
 import com.summer.gateway.discovery.ServiceRegistrar;
 import com.summer.gateway.remote.model.PublishRequestModel;
@@ -17,17 +18,19 @@ import java.net.URISyntaxException;
 public class GatewayController {
     private final ServiceRegistrar serviceRegistrar;
     private final ServiceReady serviceReady;
+    private final ServiceDelete serviceDelete;
     private final PublishRequestValidator requestValidator;
 
     @Autowired
     public GatewayController(@NonNull final ServiceRegistrar serviceRegistrar,
                              @NonNull final ServiceReady serviceReady,
+                             @NonNull final ServiceDelete serviceDelete,
                              @NonNull final PublishRequestValidator requestValidator) {
         this.serviceRegistrar = serviceRegistrar;
         this.serviceReady = serviceReady;
+        this.serviceDelete = serviceDelete;
         this.requestValidator = requestValidator;
     }
-
 
     @PostMapping("publish")
     public @ResponseBody
@@ -52,6 +55,7 @@ public class GatewayController {
 
     @GetMapping("unpublish/{instance_id}")
     public void unpublish(@PathVariable("instance_id") String instanceId) {
+        serviceDelete.delete(instanceId);
     }
 
 }

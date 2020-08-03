@@ -45,4 +45,8 @@ public class ServiceReady {
             routeHandler.updateRoutes();
         }
     }
+
+    public void updateStatusApi() {
+
+    }
 }
