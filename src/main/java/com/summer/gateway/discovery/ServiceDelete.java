@@ -34,13 +34,19 @@ public class ServiceDelete {
         this.routeHandler = routeHandler;
     }
 
-    /**
-     * Удалить микросервис
-     */
-    public void delete(String uuid) {
+    public void unpublish(String uuid) {
         Instance deleteInstance = instanceRepository.findByUuid(uuid);
         if (deleteInstance == null) throw new InstanceNotFound(uuid);
+        delete(deleteInstance);
+    }
 
+    public void deleteInstance(String uuid) {
+        Instance deleteInstance = instanceRepository.findByUuid(uuid);
+        if (deleteInstance == null) return;
+        delete(deleteInstance);
+    }
+
+    private void delete(Instance deleteInstance) {
         // Апи привязанные к этому инстансу
         List<Api> api = apiRepository.findByInstancesEquals(deleteInstance);
 

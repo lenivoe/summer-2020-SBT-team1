@@ -30,7 +30,6 @@ public class ServiceRegistrar {
     private final WordRepository wordRepository;
 
     private final ServicePing servicePing;
-    private final ServicePing2 servicePing2;
 
 
     @Value("${ping.interval}")
@@ -40,13 +39,11 @@ public class ServiceRegistrar {
         public ServiceRegistrar(@NonNull final ApiRepository apiRepository,
                                 @NonNull final InstanceRepository instanceRepository,
                                 @NonNull final WordRepository wordRepository,
-                                @NonNull final ServicePing servicePing,
-                                @NonNull final ServicePing2 servicePing2) {
+                                @NonNull final ServicePing servicePing) {
         this.apiRepository = apiRepository;
         this.instanceRepository = instanceRepository;
         this.wordRepository = wordRepository;
         this.servicePing = servicePing;
-        this.servicePing2 = servicePing2;
     }
 
     public PublishResponseModel register(PublishRequestModel request) throws URISyntaxException {
@@ -88,7 +85,7 @@ public class ServiceRegistrar {
 
 //        servicePing.addInstance(uuid);
 
-        servicePing2.addInstance(uuid);
+        servicePing.addInstance(uuid);
 
         return new PublishResponseModel(uuid, pingInterval);
     }

@@ -5,6 +5,7 @@ import com.summer.gateway.dao.entity.Instance;
 import com.summer.gateway.dao.entity.StateService;
 import com.summer.gateway.dao.repositories.ApiRepository;
 import com.summer.gateway.dao.repositories.InstanceRepository;
+import com.summer.gateway.remote.exceptions.InstanceNotFound;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,8 @@ public class ServiceReady {
 
     public void ready(String instanceUid) {
         Instance instance = instanceRepository.findByUuid(instanceUid);
+        if (instance == null) throw new InstanceNotFound(instanceUid);
+
         // Поставили активное состояние для инстанса
         instance.setState(StateService.ACTIVE);
         instanceRepository.save(instance);
@@ -44,9 +47,5 @@ public class ServiceReady {
             apiRepository.saveAll(inactiveApi);
             routeHandler.updateRoutes();
         }
-    }
-
-    public void updateStatusApi() {
-
     }
 }
