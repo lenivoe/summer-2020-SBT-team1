@@ -13,13 +13,11 @@ import java.util.TimerTask;
 
 @Service
 public class ServicePing {
-
-    private final Map<String, PingInstance> pingInstances = new HashMap<>();
-
-    private final ServiceDelete serviceDelete;
+    private final Map<String, Boolean> pingInstances = new HashMap<>();
 
     @Value("${ping.interval}")
     private int pingInterval;
+    private final ServiceDelete serviceDelete;
 
     @Autowired
     ServicePing(@NonNull final ServiceDelete serviceDelete) {
@@ -27,9 +25,9 @@ public class ServicePing {
     }
 
     public void ping(String uuid) {
-        PingInstance pingInstance = pingInstances.get(uuid);
-        if (pingInstance == null) throw new InstanceNotFound(uuid);
-        pingInstance.setPing(true);
+        Boolean ping = pingInstances.get(uuid);
+        if (ping == null) throw new InstanceNotFound(uuid);
+        pingInstances.put(uuid, true);
     }
 
     public void addInstance(String uuid) {
@@ -38,9 +36,9 @@ public class ServicePing {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                PingInstance pingInstance = pingInstances.get(uuid);
-                if (pingInstance.isPing()) {
-                    pingInstance.setPing(false);
+                boolean ping = pingInstances.get(uuid);
+                if (ping) {
+                    pingInstances.put(uuid, false);
                 } else {
                     serviceDelete.deleteInstance(uuid);
                     timer.cancel();
@@ -49,6 +47,6 @@ public class ServicePing {
             }
         }, pingInterval, pingInterval);
 
-        pingInstances.put(uuid, new PingInstance(false, timer));
+        pingInstances.put(uuid, false);
     }
 }
