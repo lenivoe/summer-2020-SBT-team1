@@ -30,6 +30,8 @@ public class ServiceRegistrar {
     private final WordRepository wordRepository;
 
     private final ServicePing servicePing;
+    private final ServicePing2 servicePing2;
+
 
     @Value("${ping.interval}")
     private int pingInterval;
@@ -38,11 +40,13 @@ public class ServiceRegistrar {
         public ServiceRegistrar(@NonNull final ApiRepository apiRepository,
                                 @NonNull final InstanceRepository instanceRepository,
                                 @NonNull final WordRepository wordRepository,
-                                @NonNull final ServicePing servicePing) {
+                                @NonNull final ServicePing servicePing,
+                                @NonNull final ServicePing2 servicePing2) {
         this.apiRepository = apiRepository;
         this.instanceRepository = instanceRepository;
         this.wordRepository = wordRepository;
         this.servicePing = servicePing;
+        this.servicePing2 = servicePing2;
     }
 
     public PublishResponseModel register(PublishRequestModel request) throws URISyntaxException {
@@ -82,14 +86,16 @@ public class ServiceRegistrar {
         apiRepository.saveAll(newApi);
         apiRepository.saveAll(oldApi);
 
-        servicePing.addInstance(uuid);
+//        servicePing.addInstance(uuid);
+
+        servicePing2.addInstance(uuid);
 
         return new PublishResponseModel(uuid, pingInterval);
     }
 
     private Api apiIsExist(Api newApi, List<Api> api) {
         for (var a : api) {
-            if (a.comparePath(newApi.getPath())) {
+            if (a.equalsWord(newApi.getPath())) {
                 if (!a.getPath().equals(newApi.getPath())) {
                     throw new ApiBad("Api is ambiguous");
                 }

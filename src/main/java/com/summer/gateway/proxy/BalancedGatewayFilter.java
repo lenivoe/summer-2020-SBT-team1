@@ -51,7 +51,7 @@ public class BalancedGatewayFilter implements GatewayFilter, Ordered {
         List<Api> api = apiRepository.findAll();
 
         for (var a : api) {
-            if (a.comparePath(path)) {
+            if (a.equalsWord(path)) {
                 forwardUri = a.getInstancesByState(StateService.ACTIVE).get(0).getAddress();
                 break;
             }

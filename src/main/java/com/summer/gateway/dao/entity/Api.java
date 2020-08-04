@@ -40,7 +40,7 @@ public class Api {
         this.wordsAmount = wordsAmount;
     }
 
-    public boolean comparePath(String path) {
+    public boolean equalsWord(String path) {
         List<String> words = new LinkedList<>(Arrays.asList(path.split("/")));
         words.remove(0);
 
