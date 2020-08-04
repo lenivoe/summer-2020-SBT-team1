@@ -13,7 +13,6 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>gatewayservice</name>
     <description>Gateway + ServiceDiscovery</description>
-
     <properties>
         <java.version>13</java.version>
         <spring-cloud.version>Hoxton.SR6</spring-cloud.version>
@@ -80,7 +79,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
     <build>
         <plugins>
             <plugin>
@@ -97,5 +95,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
