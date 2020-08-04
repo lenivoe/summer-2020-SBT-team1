@@ -5,7 +5,7 @@ info:
 paths:
   /gateway/publish:
     post:
-      tags: 
+      tags:
         - "API"
       summary: "Публикация"
       description: "Сервис публикует свое API"
@@ -33,9 +33,6 @@ paths:
                   items:
                     type: "object"
                     properties:
-                      method_type:
-                        type: "string"
-                        example: "GET"
                       path:
                         type: "string"
                         example: "/all-pet"
@@ -50,7 +47,7 @@ paths:
               schema:
                 type: "object"
                 properties:
-                  instance_id: 
+                  instance_id:
                     type: "string"
                     example: "5f9973dc-bdb3-4814-b64d-03a2d7a4b26e"
                   ping_iterval:
@@ -60,17 +57,17 @@ paths:
           description: "Eсли есть неоднозначность в API уже зарегистрированных сервисов"
   /gateway/ready/{instance_id}:
     get:
-      tags: 
-      - "API"
+      tags:
+        - "API"
       summary: "Готовность"
       description: "Сервис сообщает о готовности принимать запросы"
-      parameters: 
-      - name: "instance_id"
-        in: "path"
-        description: "ID экземпляра сервиса выданный при регистрации"
-        required: true
-        schema:
-          type: "string"
+      parameters:
+        - name: "instance_id"
+          in: "path"
+          description: "ID экземпляра сервиса выданный при регистрации"
+          required: true
+          schema:
+            type: "string"
       responses:
         200:
           description: "Oк"
@@ -78,17 +75,17 @@ paths:
           description: "Экземпляр с таким ID не подписан"
   /gateway/ping/{instance_id}:
     get:
-      tags: 
-      - "API"
+      tags:
+        - "API"
       summary: "Heartbeat"
       description: "Сервия сообщает о то, что он функционирует"
-      parameters: 
-      - name: "instance_id"
-        in: "path"
-        description: "ID экземпляра сервиса выданный при регистрации"
-        required: true
-        schema:
-          type: "string"
+      parameters:
+        - name: "instance_id"
+          in: "path"
+          description: "ID экземпляра сервиса выданный при регистрации"
+          required: true
+          schema:
+            type: "string"
       responses:
         200:
           description: "Oк"
@@ -96,17 +93,17 @@ paths:
           description: "Экземпляр с таким ID не подписан"
   /gateway/unpublish/{instance_id}:
     get:
-      tags: 
-      - "API"
+      tags:
+        - "API"
       summary: "Отписать"
       description: "Отписать экземпляр сервиса от шлюза"
-      parameters: 
-      - name: "instance_id"
-        in: "path"
-        description: "ID экземпляра сервиса выданный при регистрации"
-        required: true
-        schema:
-          type: "string"
+      parameters:
+        - name: "instance_id"
+          in: "path"
+          description: "ID экземпляра сервиса выданный при регистрации"
+          required: true
+          schema:
+            type: "string"
       responses:
         200:
           description: "Oк"
