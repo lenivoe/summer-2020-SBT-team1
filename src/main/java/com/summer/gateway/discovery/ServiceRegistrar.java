@@ -2,10 +2,8 @@ package com.summer.gateway.discovery;
 
 import com.summer.gateway.dao.entity.Api;
 import com.summer.gateway.dao.entity.Instance;
-import com.summer.gateway.dao.entity.Word;
 import com.summer.gateway.dao.repositories.ApiRepository;
 import com.summer.gateway.dao.repositories.InstanceRepository;
-import com.summer.gateway.dao.repositories.WordRepository;
 import com.summer.gateway.remote.exceptions.ApiBad;
 import com.summer.gateway.remote.exceptions.URIBad;
 import com.summer.gateway.remote.model.PublishRequestModel;
@@ -27,7 +25,6 @@ public class ServiceRegistrar {
 
     private final ApiRepository apiRepository;
     private final InstanceRepository instanceRepository;
-    private final WordRepository wordRepository;
 
     private final ServicePing servicePing;
 
@@ -35,14 +32,12 @@ public class ServiceRegistrar {
     @Value("${ping.interval}")
     private int pingInterval;
 
-        @Autowired
-        public ServiceRegistrar(@NonNull final ApiRepository apiRepository,
-                                @NonNull final InstanceRepository instanceRepository,
-                                @NonNull final WordRepository wordRepository,
-                                @NonNull final ServicePing servicePing) {
+    @Autowired
+    public ServiceRegistrar(@NonNull final ApiRepository apiRepository,
+                            @NonNull final InstanceRepository instanceRepository,
+                            @NonNull final ServicePing servicePing) {
         this.apiRepository = apiRepository;
         this.instanceRepository = instanceRepository;
-        this.wordRepository = wordRepository;
         this.servicePing = servicePing;
     }
 
@@ -52,10 +47,9 @@ public class ServiceRegistrar {
         checkURI(uri);
 
         // Добавляемые API
-        List<Api> requestApi = request.getApi().stream().map(it -> {
-            var words = pathToWord(it.getPath());
-            return new Api(words, it.getPath(), it.getApi_version(), words.size());
-        }).collect(Collectors.toList());
+        List<Api> requestApi = request.getApi().stream()
+                .map(it -> new Api(it.getPath(), it.getApi_version()))
+                .collect(Collectors.toList());
 
         // Найти соответствия, возможно это апи уже присутствует
         // Поделить апи на новое и старое
@@ -79,12 +73,10 @@ public class ServiceRegistrar {
 
         // Сохранение
         instanceRepository.save(instance);
-        newApi.forEach(it -> wordRepository.saveAll(it.getWords()));
         apiRepository.saveAll(newApi);
         apiRepository.saveAll(oldApi);
 
-//        servicePing.addInstance(uuid);
-
+        // Теперь мы ждем пинг от этого сервиса
         servicePing.addInstance(uuid);
 
         return new PublishResponseModel(uuid, pingInterval);
@@ -92,7 +84,7 @@ public class ServiceRegistrar {
 
     private Api apiIsExist(Api newApi, List<Api> api) {
         for (var a : api) {
-            if (a.equalsWord(newApi.getPath())) {
+            if (a.equalsPath(newApi.getPath())) {
                 if (!a.getPath().equals(newApi.getPath())) {
                     throw new ApiBad("Api is ambiguous");
                 }
@@ -101,24 +93,6 @@ public class ServiceRegistrar {
         }
         return null;
     }
-
-    /**
-     * Конвертировать path в word
-     */
-    private List<Word> pathToWord(String path) {
-        List<Word> words = new LinkedList<>();
-
-        int index = 0;
-        for (var word : path.split("/")) {
-            if (word.equals("")) continue;
-            else if (word.startsWith("{") && word.endsWith("}"))
-                words.add(new Word("{}", index++));
-            else
-                words.add(new Word(word, index++));
-        }
-        return words;
-    }
-
 
     /**
      * Проверка, возможно сервис с таким URI уже есть

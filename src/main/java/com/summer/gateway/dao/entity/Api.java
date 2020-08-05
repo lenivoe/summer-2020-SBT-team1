@@ -15,13 +15,9 @@ public class Api {
     private Long id;
 
     private String version;
-    private int wordsAmount;
     private String path;
     private boolean isActive = false;
 
-    @OneToMany
-    @LazyCollection(LazyCollectionOption.FALSE)
-    private List<Word> words;
     @ManyToMany
     @LazyCollection(LazyCollectionOption.FALSE)
     private Set<Instance> instances = new HashSet<>();
@@ -33,27 +29,37 @@ public class Api {
     public Api() {
     }
 
-    public Api(List<Word> words, String path, String version, int wordsAmount) {
-        this.words = words;
+    public Api(String path, String version) {
         this.path = path;
         this.version = version;
-        this.wordsAmount = wordsAmount;
     }
 
-    public boolean equalsWord(String path) {
+    public boolean equalsPath(String path) {
         List<String> words = new LinkedList<>(Arrays.asList(path.split("/")));
         words.remove(0);
+        List<String> thisWords = new LinkedList<>(Arrays.asList(this.path.split("/")));
+        thisWords.remove(0);
 
-        if (words.size() != this.words.size()) return false;
+        thisWords = thisWords.stream().map(m -> {
+            if (m.startsWith("{") && m.endsWith("}")) return "{}";
+            else return m;
+        }).collect(Collectors.toList());
+
+        if (words.size() != thisWords.size()) return false;
         else {
-            // TODO("Точно нужна сотрировка???")
-            this.words.sort(Comparator.comparingInt(Word::getIndex));
-
             for (int i = 0; i < words.size(); i++) {
-                if (!this.words.get(i).compareWord(words.get(i))) return false;
+                if (!equalsWord(thisWords.get(i), words.get(i))) return false;
             }
         }
         return true;
+    }
+
+    public boolean equalsWord(String w1, String w2) {
+        if (w1.equals("{}"))
+            return true;
+        else {
+            return w1.equals(w2);
+        }
     }
 
     public List<Instance> getInstancesByState(StateService state) {
@@ -84,28 +90,12 @@ public class Api {
         this.version = version;
     }
 
-    public int getWordsAmount() {
-        return wordsAmount;
-    }
-
-    public void setWordsAmount(int wordsAmount) {
-        this.wordsAmount = wordsAmount;
-    }
-
     public boolean isActive() {
         return isActive;
     }
 
     public void setActive(boolean active) {
         isActive = active;
-    }
-
-    public List<Word> getWords() {
-        return words;
-    }
-
-    public void setWords(List<Word> words) {
-        this.words = words;
     }
 
     public Set<Instance> getInstances() {
@@ -121,9 +111,7 @@ public class Api {
         return "API{" +
                 "id=" + id +
                 ", version='" + version + '\'' +
-                ", wordsAmount=" + wordsAmount +
                 ", isActive=" + isActive +
-                ", words=" + words +
                 ", instances=" + instances +
                 '}';
     }
@@ -133,16 +121,14 @@ public class Api {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Api api = (Api) o;
-        return wordsAmount == api.wordsAmount &&
-                isActive == api.isActive &&
+        return isActive == api.isActive &&
                 Objects.equals(id, api.id) &&
                 Objects.equals(version, api.version) &&
-                Objects.equals(words, api.words) &&
                 Objects.equals(instances, api.instances);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, version, wordsAmount, isActive, words, instances);
+        return Objects.hash(id, version, isActive, instances);
     }
 }

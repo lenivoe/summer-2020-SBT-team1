@@ -3,10 +3,8 @@ package com.summer.gateway.discovery;
 import com.summer.gateway.dao.entity.Api;
 import com.summer.gateway.dao.entity.Instance;
 import com.summer.gateway.dao.entity.StateService;
-import com.summer.gateway.dao.entity.Word;
 import com.summer.gateway.dao.repositories.ApiRepository;
 import com.summer.gateway.dao.repositories.InstanceRepository;
-import com.summer.gateway.dao.repositories.WordRepository;
 import com.summer.gateway.remote.exceptions.InstanceNotFound;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
@@ -20,17 +18,14 @@ public class ServiceDelete {
 
     private final ApiRepository apiRepository;
     private final InstanceRepository instanceRepository;
-    private final WordRepository wordRepository;
     private final RouteHandler routeHandler;
 
     @Autowired
     public ServiceDelete(@NonNull final ApiRepository apiRepository,
                          @NonNull final InstanceRepository instanceRepository,
-                         @NonNull final WordRepository wordRepository,
                          @NonNull final RouteHandler routeHandler) {
         this.apiRepository = apiRepository;
         this.instanceRepository = instanceRepository;
-        this.wordRepository = wordRepository;
         this.routeHandler = routeHandler;
     }
 
@@ -64,17 +59,8 @@ public class ServiceDelete {
         api.removeAll(deleteApi);
         apiRepository.saveAll(api);
 
-        // Чтобы удалить апи, надо удалить word
-        List<Word> deleteWord = new LinkedList<>();
-        deleteApi.forEach(it -> {
-            deleteWord.addAll(it.getWords());
-            it.getWords().clear();
-        });
-        apiRepository.saveAll(deleteApi);
-
         // Удаление
         apiRepository.deleteAll(deleteApi);
-        wordRepository.deleteAll(deleteWord);
 
         // Если состояние удаленного сервиса было ACTIVE и было удалено апи - надо пересобрать маршруты
         if (deleteInstance.getState().equals(StateService.ACTIVE) && !deleteApi.isEmpty()) {
