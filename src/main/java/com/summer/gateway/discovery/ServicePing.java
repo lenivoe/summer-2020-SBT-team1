@@ -13,6 +13,7 @@ import java.util.TimerTask;
 
 @Service
 public class ServicePing {
+
     private final Map<String, Boolean> pingInstances = new HashMap<>();
 
     @Value("${ping.interval}")
@@ -47,6 +48,6 @@ public class ServicePing {
             }
         }, pingInterval, pingInterval);
 
-        pingInstances.put(uuid, false);
+        pingInstances.put(uuid, true);
     }
 }

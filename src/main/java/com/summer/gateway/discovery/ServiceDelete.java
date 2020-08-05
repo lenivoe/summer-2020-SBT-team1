@@ -15,7 +15,6 @@ import java.util.List;
 
 @Service
 public class ServiceDelete {
-
     private final ApiRepository apiRepository;
     private final InstanceRepository instanceRepository;
     private final RouteHandler routeHandler;

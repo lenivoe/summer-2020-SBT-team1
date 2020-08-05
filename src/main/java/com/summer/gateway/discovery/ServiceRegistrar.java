@@ -41,9 +41,14 @@ public class ServiceRegistrar {
         this.servicePing = servicePing;
     }
 
-    public PublishResponseModel register(PublishRequestModel request) throws URISyntaxException {
+    public PublishResponseModel register(PublishRequestModel request) {
         // URI
-        URI uri = createURI(request.getAddress(), request.getPort());
+        URI uri;
+        try {
+            uri = createURI(request.getAddress(), request.getPort());
+        } catch (URISyntaxException e) {
+            throw new URIBad("Address in request is bad");
+        }
         checkURI(uri);
 
         // Добавляемые API

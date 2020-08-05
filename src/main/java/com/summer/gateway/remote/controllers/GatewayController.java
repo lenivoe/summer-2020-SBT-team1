@@ -40,12 +40,7 @@ public class GatewayController {
     public @ResponseBody
     PublishResponseModel publish(@RequestBody PublishRequestModel request) {
         requestValidator.validate(request);
-        try {
-            return serviceRegistrar.register(request);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return serviceRegistrar.register(request);
     }
 
     @GetMapping("ping/{instance_id}")

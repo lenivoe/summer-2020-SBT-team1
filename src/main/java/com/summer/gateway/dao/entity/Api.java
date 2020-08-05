@@ -54,7 +54,7 @@ public class Api {
         return true;
     }
 
-    public boolean equalsWord(String w1, String w2) {
+    private boolean equalsWord(String w1, String w2) {
         if (w1.equals("{}"))
             return true;
         else {
