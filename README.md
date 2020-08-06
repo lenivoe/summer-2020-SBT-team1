@@ -29,5 +29,5 @@ ping.check_time=30000
 ```
 4. Launch app with parameters:
 ```bash
-java -jar ./jar_name.jar --spring.config.location=./application.properties
+java -jar ./gateway-<version>.jar --spring.config.location=./application.properties
 ```
