@@ -6,3 +6,5 @@
 ![GitHub contributors](https://img.shields.io/github/contributors/lenivoe/summer-2020-SBT-team1)
 
 Summer internship at SberTech of team 1.
+
+[Swagger API documentation]()
