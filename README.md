@@ -7,4 +7,4 @@
 
 Summer internship at SberTech of team 1.
 
-[Swagger API documentation]()
+[Swagger API documentation](https://lenivoe.github.io/summer-2020-SBT-team1/index.html)
