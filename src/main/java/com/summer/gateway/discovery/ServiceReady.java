@@ -33,7 +33,10 @@ public class ServiceReady {
         Instance instance = instanceRepository.findByUuid(instanceUid);
         if (instance == null) throw new InstanceNotFound(instanceUid);
 
-        // Поставили активное состояние для инстанса
+        // Состояние инстанса уже Active
+        if (instance.getState().equals(StateService.ACTIVE)) return;
+
+        // Поставить активное состояние для инстанса
         instance.setState(StateService.ACTIVE);
         instanceRepository.save(instance);
 
