@@ -1,15 +1,16 @@
 openapi: 3.0.2
 info:
   title: "API Gateway + Service discovery"
-  version: 1.0.0
+  version: 1.1.0
 paths:
   /gateway/publish:
     post:
       tags:
         - "API"
       summary: "Публикация"
-      description: "Сервис публикует свое API"
+      description: "Экземпляр сервиса публикует свое API. Сразу после этого, экземпляр считается неактивным и на него не перенаправляются запросы."
       requestBody:
+        description: "В качестве поля address может выступать как ip, так и доменное имя."
         required: true
         content:
           application/json:
@@ -35,13 +36,16 @@ paths:
                     properties:
                       path:
                         type: "string"
-                        example: "/all-pet"
                       api_version:
                         type: "string"
-                        example: "v1"
+                  example:
+                    - path: "/collections/posts/{postID}/token/{token}"
+                      api_version: "v1"
+                    - path: "/collections/posts"
+                      api_version: "v1"
       responses:
         200:
-          description: "OK"
+          description: "OK. Экземпляр сервиса получае свой id и интервал, с которым он должен пинговать данный микросервис."
           content:
             application/json:
               schema:
@@ -54,58 +58,58 @@ paths:
                     type: "integer"
                     example: 10000
         400:
-          description: "Eсли есть неоднозначность в API уже зарегистрированных сервисов"
+          description: "Eсли есть неоднозначность в API или в адресе уже зарегистрированных сервисов."
   /gateway/ready/{instance_id}:
     get:
       tags:
         - "API"
       summary: "Готовность"
-      description: "Сервис сообщает о готовности принимать запросы"
+      description: "Экземпляр сервиса сообщает о готовности принимать запросы."
       parameters:
         - name: "instance_id"
           in: "path"
-          description: "ID экземпляра сервиса выданный при регистрации"
+          description: "ID экземпляра сервиса выданный при публикации API."
           required: true
           schema:
             type: "string"
       responses:
         200:
-          description: "Oк"
+          description: "Oк, если экземпляр с таким ID опубликовал API."
         403:
-          description: "Экземпляр с таким ID не подписан"
+          description: "Экземпляр с таким ID не опубликовал API."
   /gateway/ping/{instance_id}:
     get:
       tags:
         - "API"
       summary: "Heartbeat"
-      description: "Сервия сообщает о то, что он функционирует"
+      description: "Экземпляр сервиса сообщает о том, что он функционирует."
       parameters:
         - name: "instance_id"
           in: "path"
-          description: "ID экземпляра сервиса выданный при регистрации"
+          description: "ID экземпляра сервиса выданный при публикации API."
           required: true
           schema:
             type: "string"
       responses:
         200:
-          description: "Oк"
+          description: "Oк, если экземпляр с таким ID опубликовал API."
         403:
-          description: "Экземпляр с таким ID не подписан"
+          description: "Экземпляр с таким ID не опубликовал API."
   /gateway/unpublish/{instance_id}:
     get:
       tags:
         - "API"
-      summary: "Отписать"
-      description: "Отписать экземпляр сервиса от шлюза"
+      summary: "Отключение"
+      description: "Отключить экземпляр сервиса от шлюза. На него больше не будут перенаправляться запросы и от него не будет требоваться пинг."
       parameters:
         - name: "instance_id"
           in: "path"
-          description: "ID экземпляра сервиса выданный при регистрации"
+          description: "ID экземпляра сервиса, выданный при публикации API."
           required: true
           schema:
             type: "string"
       responses:
         200:
-          description: "Oк"
+          description: "Oк, если экземпляр с таким ID опубликовал API."
         403:
-          description: "Экземпляр с таким ID не подписан"
+          description: "Экземпляр с таким ID не опубликовал API."
