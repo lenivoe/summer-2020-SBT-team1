@@ -8,10 +8,10 @@ import java.util.TimerTask;
 
 @Service
 public class ServicePing {
-    public static ArrayList<String> arrayOfInstanses = new ArrayList<>() ;
+    public ArrayList<String> arrayOfInstanses = new ArrayList<>() ;
 
     public void pingMain(Integer indexOfInstanceId) {
-        boolean isExist = true;
+
 
     }
 
@@ -20,21 +20,21 @@ public class ServicePing {
     }
 
     public void addInstance(String instanceId) {
-        arrayOfInstanses.add(instanceId);
-    }
-
-    public boolean timerPing(Integer indexOfInstanceId) {
-        final Timer time = new Timer();
-        int index = indexOfInstanceId;
-        time.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                while (true) {
-                    if (checkPing() == true) {
-                        break;
-                    }
-                }
+                arrayOfInstanses.add(instanceId);
             }
+
+            public boolean timerPing(Integer indexOfInstanceId) {
+                final Timer time = new Timer();
+                int index = indexOfInstanceId;
+                time.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        while (true) {
+                            if (checkPing() == true) {
+                                break;
+                            }
+                        }
+                    }
         }, 0, 10000);
         index++;
         pingMain(index);

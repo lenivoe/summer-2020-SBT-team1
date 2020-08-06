@@ -43,6 +43,7 @@ public class GatewayController {
 
     @GetMapping("ping/{instance_id}")
     public void ping(@PathVariable("instance_id") String instanceId) {
+
     }
 
     @GetMapping("ready/{instance_id}")
