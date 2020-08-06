@@ -16,8 +16,8 @@ public class ServicePing {
 
     private final Map<String, Boolean> pingInstances = new HashMap<>();
 
-    @Value("${ping.interval}")
-    private int pingInterval;
+    @Value("${ping.check_time}")
+    private int pingCheckTime;
     private final ServiceDelete serviceDelete;
 
     @Autowired
@@ -46,7 +46,7 @@ public class ServicePing {
                     pingInstances.remove(uuid);
                 }
             }
-        }, pingInterval, pingInterval);
+        }, pingCheckTime, pingCheckTime);
 
         pingInstances.put(uuid, true);
     }

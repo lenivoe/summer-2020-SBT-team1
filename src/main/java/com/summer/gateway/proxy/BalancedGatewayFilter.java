@@ -1,6 +1,7 @@
 package com.summer.gateway.proxy;
 
 import com.summer.gateway.dao.entity.Api;
+import com.summer.gateway.dao.entity.Instance;
 import com.summer.gateway.dao.entity.StateService;
 import com.summer.gateway.dao.repositories.ApiRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import reactor.core.publisher.Mono;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Random;
 
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR;
 
@@ -52,7 +54,8 @@ public class BalancedGatewayFilter implements GatewayFilter, Ordered {
 
         for (var a : api) {
             if (a.equalsPath(path)) {
-                forwardUri = a.getInstancesByState(StateService.ACTIVE).get(0).getAddress();
+                List<Instance> instances = a.getInstancesByState(StateService.ACTIVE);
+                forwardUri = instances.get(new Random().nextInt(instances.size())).getAddress();
                 break;
             }
         }
