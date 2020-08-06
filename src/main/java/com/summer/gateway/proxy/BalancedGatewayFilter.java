@@ -22,11 +22,6 @@ import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.G
 
 @Component
 public class BalancedGatewayFilter implements GatewayFilter, Ordered {
-    @Override
-    public int getOrder() {
-        return 10001;
-    }
-
     private final ApiRepository apiRepository;
 
     @Autowired
@@ -60,8 +55,6 @@ public class BalancedGatewayFilter implements GatewayFilter, Ordered {
             }
         }
 
-        if (forwardUri == null) throw new RuntimeException("Плохо очень");
-
         // Формируем итоговый запрос
         URI result = null;
 
@@ -82,4 +75,10 @@ public class BalancedGatewayFilter implements GatewayFilter, Ordered {
 
         return chain.filter(exchange);
     }
+
+    @Override
+    public int getOrder() {
+        return 10001;
+    }
+
 }

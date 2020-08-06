@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URISyntaxException;
-
 @RestController
 @RequestMapping("gateway")
 public class GatewayController {
