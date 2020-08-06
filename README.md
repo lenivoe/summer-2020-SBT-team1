@@ -9,3 +9,25 @@ Summer internship at SberTech of team 1.
 
 ## API Documentation
 [Swagger](https://lenivoe.github.io/summer-2020-SBT-team1/index.html)
+
+## Installation
+0. It is necessary to install [JDK](https://jdk.java.net/archive/) version 11 or higher, [PostgreSQL](https://www.postgresql.org/download/).
+1. You need create database with some name (for example, "gateway") like [here](https://www.guru99.com/postgresql-create-database.html).
+2. TODO: Download files...
+3. Open config file "application.properties" and set your port, database name, postres password.
+```properties
+server.port=<port>
+
+spring.datasource.url=jdbc:postgresql://localhost/<database name>
+spring.datasource.username=postgres
+spring.datasource.password=<postres password>
+spring.jpa.generate-ddl=true
+spring.jpa.hibernate.ddl-auto=create-drop
+
+ping.interval=10000
+ping.check_time=30000
+```
+4. Launch app with parameters:
+```bash
+java -jar ./jar_name.jar --spring.config.location=./application.properties
+```
