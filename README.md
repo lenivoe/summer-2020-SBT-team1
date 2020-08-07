@@ -27,7 +27,7 @@ spring.jpa.hibernate.ddl-auto=create-drop
 ping.interval=10000
 ping.check_time=30000
 ```
-4. Launch app with parameters:
+4.  Launch app with parameters:
 ```bash
 java -jar ./gateway-<version>.jar --spring.config.location=./application.properties
 ```
