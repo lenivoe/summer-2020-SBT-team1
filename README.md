@@ -13,7 +13,7 @@ Summer internship at SberTech of team 1.
 ## Installation
 0.  It is necessary to install [JDK](https://jdk.java.net/archive/) version 11 or higher, [PostgreSQL](https://www.postgresql.org/download/).
 1.  You need create database with some name (for example, "gateway") like [here](https://www.guru99.com/postgresql-create-database.html).
-2.  Download "gateway-<version>.jar" and "application.properties" files from [releases](https://github.com/lenivoe/summer-2020-SBT-team1/releases).
+2.  Download "gateway-version.jar" and "application.properties" files from [releases](https://github.com/lenivoe/summer-2020-SBT-team1/releases).
 3.  Open config file "application.properties" and set your port, database name, postgres password.
 ```properties
 server.port=<port>
