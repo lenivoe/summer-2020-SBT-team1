@@ -1,14 +1,14 @@
 openapi: 3.0.2
 info:
   title: "API Gateway + Service discovery"
-  version: 1.1.0
+  version: 1.1.1
 paths:
   /gateway/publish:
     post:
       tags:
         - "API"
       summary: "Публикация"
-      description: "Экземпляр сервиса публикует свое API. Сразу после этого, экземпляр считается неактивным и на него не перенаправляются запросы."
+      description: "Экземпляр сервиса публикует свое API. API должно быть однозначно, если есть два запроса с одиноковыми путями, но с различными http методами, их следует передать как один. Сразу после этого, экземпляр считается неактивным и на него не перенаправляются запросы."
       requestBody:
         description: "В качестве поля address может выступать как ip, так и доменное имя."
         required: true
@@ -19,7 +19,7 @@ paths:
               properties:
                 address:
                   type: "string"
-                  example: "192.168.1.50"
+                  example: "http://192.168.1.50"
                 port:
                   type: "string"
                   example: "8080"
