@@ -54,7 +54,7 @@ paths:
                   instance_id:
                     type: "string"
                     example: "5f9973dc-bdb3-4814-b64d-03a2d7a4b26e"
-                  ping_iterval:
+                  ping_interval:
                     type: "integer"
                     example: 10000
         400:
