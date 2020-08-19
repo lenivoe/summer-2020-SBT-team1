@@ -7,6 +7,15 @@
 
 Summer internship at SberTech of team 1.
 
+## All microservices:
+* [API Gateway + Service Discovery](https://github.com/lenivoe/summer-2020-SBT-team1)
+
+* [Content and Metadata management](https://github.com/ASurtaev/SummerSberPractice)
+
+* [Collections and Rating](https://github.com/BorZzzenko/SummerPractice_SBT2020)
+
+* [Auth/Validation and user permissions](https://github.com/D076/summer-practice-2020-SBT)
+
 ## API Documentation
 [Swagger](https://lenivoe.github.io/summer-2020-SBT-team1/index.html)
 
